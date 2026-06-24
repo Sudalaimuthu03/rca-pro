@@ -209,6 +209,6 @@ def analyze_incident(incident_id: int, user_id: int, title: str, error_log: str)
             "category": row["category"],
             "recurrence_count": row["recurrence_count"],
             "historical_solution": row["historical_solution"],
-            "created_at": row["created_at"].isoformat(),
+            "created_at": row["created_at"].isoformat()+"Z",
         },
     }
