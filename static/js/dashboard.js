@@ -249,7 +249,6 @@
     (el === titleInput ? $("#incTitleError") : $("#incLogError")).classList.remove("show");
   }));
 
-  // Option B: submit only CREATES the incident (status = OPEN).
   // Analysis is triggered separately from the drawer via "Analyze with AI".
   newForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -299,7 +298,7 @@
       <div class="panel analyzing-panel" style="margin-top:16px;">
         <svg class="trace-loader" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true">
           <defs>
-            <linearGradient id="loaderGradient2" x1="0" y1="0" x2="1" y2="0">
+            <linearGradient id="loaderGradient" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%"   stop-color="#7C6FF0" stop-opacity="0"/>
               <stop offset="50%"  stop-color="#9C8FFF" stop-opacity="1"/>
               <stop offset="100%" stop-color="#7C6FF0" stop-opacity="0"/>
