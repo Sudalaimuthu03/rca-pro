@@ -90,7 +90,7 @@ def get_incident_by_id(user_id: int, incident_id: int) -> dict:
     rc_sql = "SELECT * FROM root_causes WHERE incident_id = %s ORDER BY created_at DESC LIMIT 1"
     rc = execute_query(rc_sql, (incident_id,), fetch="one")
     if rc and rc.get("created_at"):
-        rc["created_at"] = rc["created_at"].isoformat()
+        rc["created_at"] = rc["created_at"].isoformat()+"Z"
 
     incident = _serialize(row)
     incident["analysis"] = rc
@@ -213,5 +213,5 @@ def _serialize(row: dict) -> dict:
     result = dict(row)
     for key in ("created_at", "resolved_at"):
         if result.get(key):
-            result[key] = result[key].isoformat()
+            result[key] = result[key].isoformat()+"Z"
     return result
