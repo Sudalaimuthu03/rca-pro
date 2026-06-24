@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log in · RCAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/tokens.css" />
+  <link rel="stylesheet" href="/static/css/animations.css" />
+  <link rel="stylesheet" href="/static/css/auth.css" />
+</head>
+<body class="auth-body">
+
+  <div class="auth-bg" aria-hidden="true"></div>
+  <svg class="auth-trace" viewBox="0 0 800 600" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="traceGradient" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#7C6FF0" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#9C8FFF" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#7C6FF0" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="M -50 420 L 120 420 L 160 320 L 220 480 L 280 420 L 340 420 L 380 240 L 440 420 L 850 420" />
+  </svg>
+
+  <main class="auth-card">
+    <div class="auth-brand">
+      <span class="mark">⬡</span>
+      <span class="name">RCAI</span>
+    </div>
+
+    <h1>Welcome back</h1>
+    <p class="sub">Log in to keep tracing root causes.</p>
+
+    <div class="auth-banner" id="formBanner"></div>
+
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" />
+        <div class="field-error" id="emailError"></div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" />
+        <div class="field-error" id="passwordError"></div>
+      </div>
+
+      <div class="remember-row">
+        <label><input type="checkbox" id="remember" /> Remember me</label>
+      </div>
+
+      <button type="submit" class="btn-primary" id="submitBtn">
+        <span id="submitLabel">Log in</span>
+      </button>
+    </form>
+
+    <p class="auth-footer-link">Don't have an account? <a href="/signup">Sign up</a></p>
+  </main>
+
+  <script src="/static/js/auth.js"></script>
+</body>
+</html>

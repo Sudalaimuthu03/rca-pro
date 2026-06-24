@@ -1,0 +1,47 @@
+version: "3.9"
+
+# Local development compose file — runs Postgres alongside the app.
+#
+# For the t3.micro production deployment, DO NOT run the `db` service on
+# the same instance: 1GB RAM is too tight for Postgres + Flask together.
+# Instead, set DATABASE_URL in your .env to a managed Postgres connection
+# string (e.g. Neon's free tier) and only deploy the `app` service.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: rcai_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: rcai_db
+      DB_USER: postgres
+      DB_PASSWORD: password
+      FLASK_DEBUG: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+
+volumes:
+  pgdata:

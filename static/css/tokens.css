@@ -1,0 +1,66 @@
+/* ============================================================
+   RCAI Design Tokens
+   Direction: a control-room / diagnostic-trace aesthetic.
+   The product traces faults back through a system — the visual
+   language borrows from oscilloscopes & signal monitoring rather
+   than generic "AI SaaS" gradients. Deep ink-navy base, a single
+   electric-indigo signature accent (brand), and semantic status
+   colors that do real work (severity/status), kept separate from
+   the brand color so they're never ambiguous.
+   ============================================================ */
+
+:root {
+  /* surfaces */
+  --bg:            #0A0E14;
+  --bg-elevated:   #0E131B;
+  --surface:       #121822;
+  --surface-2:     #182030;
+  --border:        #232C3D;
+  --border-soft:   #1A2230;
+
+  /* text */
+  --text:          #E9EEF6;
+  --text-muted:    #93A0B4;
+  --text-faint:    #5A6678;
+
+  /* brand / signature accent */
+  --brand:         #7C6FF0;
+  --brand-bright:  #9C8FFF;
+  --brand-dim:     #4A3FA0;
+  --brand-glow:    rgba(124, 111, 240, 0.35);
+
+  /* semantic — severity */
+  --critical:      #FF4D5E;
+  --high:          #FF9F43;
+  --medium:        #4DABF7;
+  --low:           #6FCF97;
+
+  /* semantic — status */
+  --status-open:        #93A0B4;
+  --status-progress:    #4DABF7;
+  --status-resolved:    #6FCF97;
+  --status-closed:      #5A6678;
+
+  /* type */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  /* scale */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-soft: 0 8px 30px rgba(0,0,0,0.35);
+  --shadow-glow: 0 0 0 1px var(--brand-glow), 0 8px 24px var(--brand-glow);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

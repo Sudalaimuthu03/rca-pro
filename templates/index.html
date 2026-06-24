@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RCAI – Root Cause AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-YEteyAKbjYSLDrpbBY0aFgK1CrQHo0Erb5XT/MU5FYvkb3SmPSZSisW7LOYTKvTx" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/static/css/tokens.css" />
+  <link rel="stylesheet" href="/static/css/animations.css" />
+  <link rel="stylesheet" href="/static/css/dashboard.css" />
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- MOBILE TOPBAR -->
+    <header class="mobile-topbar">
+      <button class="icon-btn" id="menuToggle" aria-label="Open menu">☰</button>
+      <div class="brand">
+        <span class="brand-icon">⬡</span><span class="brand-name">RCAI</span>
+      </div>
+      <div class="mobile-spacer"></div>
+    </header>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand desktop-only">
+        <span class="brand-icon">⬡</span><span class="brand-name">RCAI</span>
+      </div>
+      <nav class="nav">
+        <a href="#" class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">▦</span> Dashboard
+        </a>
+        <a href="#" class="nav-item" data-view="new">
+          <span class="nav-icon">✦</span> New Incident
+        </a>
+        <a href="#" class="nav-item" data-view="incidents">
+          <span class="nav-icon">◈</span> Incidents
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <span class="user-avatar" id="userAvatar">?</span>
+          <span class="user-name" id="userName">—</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn">Log out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- DASHBOARD VIEW -->
+      <section class="view active" data-view="dashboard">
+        <div class="view-header fade-up">
+          <div>
+            <h1>Dashboard</h1>
+            <p class="view-sub">A live trace of incident health across your systems.</p>
+          </div>
+        </div>
+
+        <div class="stat-grid stagger" id="statGrid"></div>
+
+        <div class="panel-grid">
+          <div class="panel fade-up">
+            <div class="panel-head"><h3>Incidents — last 30 days</h3></div>
+            <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+          </div>
+          <div class="panel fade-up">
+            <div class="panel-head"><h3>Root cause categories</h3></div>
+            <div class="chart-wrap"><canvas id="categoryChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="panel fade-up">
+          <div class="panel-head">
+            <h3>Recent incidents</h3>
+            <a href="#" class="link-btn" data-view-link="incidents">View all →</a>
+          </div>
+          <div id="recentList" class="incident-list"></div>
+        </div>
+      </section>
+
+      <!-- NEW INCIDENT VIEW -->
+      <section class="view" data-view="new">
+        <div class="view-header fade-up">
+          <div>
+            <h1>New Incident</h1>
+            <p class="view-sub">Paste the error and let RCAI trace it back to the root cause.</p>
+          </div>
+        </div>
+
+        <div class="panel fade-up" id="newIncidentPanel">
+          <form id="newIncidentForm" novalidate>
+            <div class="field">
+              <label for="incTitle">Title</label>
+              <input type="text" id="incTitle" placeholder="e.g. Payment service returning 500s" />
+              <div class="field-error" id="incTitleError"></div>
+            </div>
+
+            <div class="field">
+              <label for="incSeverity">Severity</label>
+              <select id="incSeverity">
+                <option value="LOW">Low</option>
+                <option value="MEDIUM" selected>Medium</option>
+                <option value="HIGH">High</option>
+                <option value="CRITICAL">Critical</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="incLog">Error log</label>
+              <textarea id="incLog" rows="9" placeholder="Paste the stack trace / error log here…"></textarea>
+              <div class="field-error" id="incLogError"></div>
+            </div>
+
+            <button type="submit" class="btn-primary" id="saveBtn">
+              <span id="saveLabel">Save Incident</span>
+            </button>
+          </form>
+        </div>
+
+
+        <div class="analysis-result" id="analysisResult" hidden></div>
+      </section>
+
+      <!-- INCIDENTS VIEW -->
+      <section class="view" data-view="incidents">
+        <div class="view-header fade-up">
+          <div>
+            <h1>Incidents</h1>
+            <p class="view-sub">Everything you've analyzed, in one place.</p>
+          </div>
+          <div class="filter-row">
+            <select id="filterStatus">
+              <option value="">All statuses</option>
+              <option value="OPEN">Open</option>
+              <option value="IN_PROGRESS">In progress</option>
+              <option value="RESOLVED">Resolved</option>
+              <option value="CLOSED">Closed</option>
+            </select>
+            <select id="filterSeverity">
+              <option value="">All severities</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="CRITICAL">Critical</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="incidentsList" class="incident-list stagger"></div>
+        <div class="empty-state" id="incidentsEmpty" hidden>
+          <span class="empty-icon">◈</span>
+          <p>No incidents match these filters yet.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- incident detail drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <h2 id="drawerTitle">Incident</h2>
+      <button class="icon-btn" id="drawerClose" aria-label="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+  <div class="toast-stack" id="toastStack"></div>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
