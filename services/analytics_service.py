@@ -75,7 +75,7 @@ def get_dashboard_stats(user_id: int) -> dict:
         "avg_resolution_minutes": float(avg_resolution.get("avg_resolution_minutes") or 0),
         "root_cause_distribution": root_cause_dist,
         "recent_incidents": [
-            {**r, "created_at": r["created_at"].isoformat()} for r in recent
+            {**r, "created_at": r["created_at"].isoformat()+"Z"} for r in recent
         ],
         "daily_trend": [
             {"day": str(r["day"]), "incidents": r["incidents"]} for r in daily_trend
