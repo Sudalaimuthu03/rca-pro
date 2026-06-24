@@ -48,5 +48,5 @@ class Config:
     # CORS_ORIGINS=https://yourdomain.com
     # Multiple origins: CORS_ORIGINS=https://a.com,https://b.com
     _cors_env = os.getenv("CORS_ORIGINS", "")
-    CORS_ORIGINS = [o.strip() for o in _cors_env.split(",") if o.strip()] or None
+    CORS_ORIGINS = [o.strip() for o in _cors_env.split(",") if o.strip()] or ["*"]
     # None means "same origin only" for Flask-CORS when supports_credentials=True
