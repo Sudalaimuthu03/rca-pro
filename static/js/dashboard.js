@@ -149,7 +149,7 @@
 
   function renderTrendChart(trend) {
     const ctx = $("#trendChart");
-    const labels = trend.map(t => new Date(t.day).toLocaleDateString(undefined, { month: "short", day: "numeric" }));
+    const labels = trend.map(t => {const [y,m,d] = t.day.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString(undefined, { month: "short", day: "numeric" }));
     const values = trend.map(t => t.incidents);
     if (trendChart) trendChart.destroy();
     trendChart = new Chart(ctx, {
