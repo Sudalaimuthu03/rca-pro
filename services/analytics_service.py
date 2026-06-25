@@ -53,7 +53,7 @@ def get_dashboard_stats(user_id: int) -> dict:
 
     daily_trend = execute_query(
         """
-        SELECT DATE(created_at) AS day, COUNT(*) AS incidents
+        SELECT DATE(created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata') AS day, COUNT(*) AS incidents
         FROM incidents
         WHERE user_id = %s AND created_at >= NOW() - INTERVAL '30 days'
         GROUP BY day
