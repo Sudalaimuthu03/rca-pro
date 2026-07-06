@@ -33,7 +33,7 @@ def create():
 def list_all():
     status   = request.args.get("status")
     severity = request.args.get("severity")
-    # Bug 3 fixed: wrap int() in try/except so bad values return 400, not 500
+    
     try:
         limit  = int(request.args.get("limit",  50))
         offset = int(request.args.get("offset",  0))
@@ -60,7 +60,6 @@ def update(incident_id):
 @bp.route("/<int:incident_id>/resolve", methods=["PUT"])
 @login_required
 def resolve(incident_id):
-    # Bug 1 fixed: calls resolve_incident (RESOLVED + resolved_at)
     result = resolve_incident(_uid(), incident_id)
     return _json(result, 200 if result["success"] else 400)
 
@@ -91,14 +90,13 @@ def analyze(incident_id):
 
     incident = existing["incident"]
 
-    # Bug 4 fixed: block re-analysis if a root_cause row already exists
     if incident.get("analysis"):
         return _json(
             {"success": False, "error": "This incident has already been analyzed. Delete it and create a new one to re-analyze."},
             409,
         )
 
-    # Bug 1 fixed: auto-transition to IN_PROGRESS when analysis starts
+    
     set_in_progress(_uid(), incident_id)
 
     result = analyze_incident(incident_id, _uid(), incident["title"], incident["error_log"])
