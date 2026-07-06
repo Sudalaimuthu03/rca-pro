@@ -7,7 +7,6 @@ from database.connection import execute_query
 VALID_SEVERITIES = {"LOW", "MEDIUM", "HIGH", "CRITICAL"}
 VALID_STATUSES   = {"OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"}
 
-# Bug 12 fixed: safe pagination bounds
 _LIMIT_MIN  = 1
 _LIMIT_MAX  = 200
 _OFFSET_MIN = 0
@@ -48,7 +47,6 @@ def create_incident(user_id: int, data: dict) -> dict:
 
 
 def get_all_incidents(user_id: int, status=None, severity=None, limit=50, offset=0) -> dict:
-    # Bug 12 fixed: clamp limit and offset to safe bounds
     limit  = max(_LIMIT_MIN,  min(_LIMIT_MAX,  int(limit)))
     offset = max(_OFFSET_MIN, int(offset))
 
@@ -104,7 +102,7 @@ def update_incident(user_id: int, incident_id: int, data: dict) -> dict:
     if not existing:
         return {"success": False, "error": "Incident not found"}
 
-    # Bug 2 fixed: validate status and severity before writing
+    
     if "status" in data:
         val = (data["status"] or "").upper()
         if val not in VALID_STATUSES:
@@ -124,8 +122,7 @@ def update_incident(user_id: int, incident_id: int, data: dict) -> dict:
                 val = val.upper()
             updates.append(f"{field} = %s")
             params.append(val)
-            # Bug 10 fixed: if status is being set to RESOLVED via update,
-            # also stamp resolved_at so analytics avg_resolution is correct
+            
             if field == "status" and val == "RESOLVED":
                 updates.append("resolved_at = %s")
                 params.append(datetime.now(timezone.utc))
@@ -140,7 +137,6 @@ def update_incident(user_id: int, incident_id: int, data: dict) -> dict:
 
 
 def resolve_incident(user_id: int, incident_id: int) -> dict:
-    """Bug 1 fixed: dedicated resolve — sets status=RESOLVED and stamps resolved_at."""
     existing = execute_query(
         "SELECT id, status FROM incidents WHERE id = %s AND user_id = %s", (incident_id, user_id), fetch="one"
     )
@@ -155,13 +151,12 @@ def resolve_incident(user_id: int, incident_id: int) -> dict:
         WHERE id = %s AND user_id = %s
         RETURNING *
     """
-    # Bug 9 fixed: datetime.utcnow() → datetime.now(timezone.utc)
+   
     row = execute_query(sql, (datetime.now(timezone.utc), incident_id, user_id), fetch="one")
     return {"success": True, "incident": _serialize(row)}
 
 
 def close_incident(user_id: int, incident_id: int) -> dict:
-    """Bug 1 fixed: close sets status=CLOSED (not RESOLVED)."""
     existing = execute_query(
         "SELECT id, status FROM incidents WHERE id = %s AND user_id = %s", (incident_id, user_id), fetch="one"
     )
@@ -180,8 +175,7 @@ def close_incident(user_id: int, incident_id: int) -> dict:
     return {"success": True, "incident": _serialize(row)}
 
 
-def set_in_progress(user_id: int, incident_id: int) -> dict:
-    """Bug 1 fixed: wire IN_PROGRESS — called automatically when /analyze is triggered."""
+def set_in_progress(user_id: int, incident_id: int) -> dict:    
     existing = execute_query(
         "SELECT id, status FROM incidents WHERE id = %s AND user_id = %s", (incident_id, user_id), fetch="one"
     )
