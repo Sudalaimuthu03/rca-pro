@@ -1,18 +1,3 @@
-"""
-AI Root Cause Analysis — Hugging Face Inference Providers (router).
-
-Why a hosted API instead of a local model: the target deployment is a
-t3.micro (1 vCPU / 1GB RAM), which cannot reliably load or run an LLM
-locally — there isn't enough memory headroom alongside Flask + Postgres.
-Routing inference through Hugging Face keeps the EC2 box doing nothing
-heavier than an HTTPS call.
-
-Semantic search has been removed entirely. "Have we seen this before?" is
-now answered with a plain SQL lookup against a `category` tag the model
-assigns to each incident — grounded in real stored data, not an embedding
-similarity guess.
-"""
-
 import json
 import logging
 import re
@@ -22,7 +7,6 @@ from config import Config
 
 logger = logging.getLogger(__name__)
 
-# Bug 5 fixed: cap error_log before sending to HF API to avoid exceeding
 # the model's context window and wasting tokens on oversized inputs.
 _ERROR_LOG_MAX_CHARS = 8000
 
@@ -67,11 +51,11 @@ Rules:
 
 
 def _call_hf_api(title: str, error_log: str) -> dict:
-    # Bug 7 fixed: raise a clear error class that analyze_incident catches
+    
     if not Config.HF_API_TOKEN:
         raise ValueError("HF_API_TOKEN is not configured")
 
-    # Bug 5 fixed: truncate oversized error logs
+    
     if len(error_log) > _ERROR_LOG_MAX_CHARS:
         logger.warning(f"error_log truncated from {len(error_log)} to {_ERROR_LOG_MAX_CHARS} chars")
         error_log = error_log[:_ERROR_LOG_MAX_CHARS] + "\n... [truncated]"
@@ -99,8 +83,7 @@ def _call_hf_api(title: str, error_log: str) -> dict:
 
 
 def _parse_json(raw: str) -> dict:
-    # Bug 15 fixed: use regex to robustly strip all markdown fence variants
-    # (``` ```json  ``` json  etc.) before parsing
+    
     text = re.sub(r"```(?:json)?\s*", "", raw).strip()
     return json.loads(text)
 
@@ -170,7 +153,6 @@ def analyze_incident(incident_id: int, user_id: int, title: str, error_log: str)
         logger.error(f"HF API call failed: {e}")
         return {"success": False, "error": "AI analysis service is unavailable. Please try again."}
     except (json.JSONDecodeError, ValueError) as e:
-        # Bug 7 fixed: ValueError now catches missing HF_API_TOKEN too
         logger.error(f"AI response error: {e}")
         return {"success": False, "error": "AI analysis failed. Please check configuration and try again."}
 
