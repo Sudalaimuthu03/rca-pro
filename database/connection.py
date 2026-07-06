@@ -6,7 +6,6 @@ from config import Config
 
 logger = logging.getLogger(__name__)
 
-# Bug 8 fixed: use a ThreadedConnectionPool instead of a new connection per
 # query. minconn=1, maxconn=10 fits comfortably on a t3.micro alongside
 # the single-worker / 4-thread Gunicorn deployment.
 _pool: psycopg2.pool.ThreadedConnectionPool | None = None
