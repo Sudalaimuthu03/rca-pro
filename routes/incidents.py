@@ -67,7 +67,6 @@ def resolve(incident_id):
 @bp.route("/<int:incident_id>/close", methods=["PUT"])
 @login_required
 def close(incident_id):
-    # Bug 1 fixed: new /close endpoint sets status=CLOSED
     result = close_incident(_uid(), incident_id)
     return _json(result, 200 if result["success"] else 400)
 
