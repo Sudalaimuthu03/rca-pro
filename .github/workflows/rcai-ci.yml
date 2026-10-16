@@ -57,6 +57,14 @@ jobs:
         run: |
           docker build -t rcai:${{ github.sha }} .
 
+      - name: Diagnose GitHub OIDC Context
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Ref: $GITHUB_REF"
+          echo "Event: $GITHUB_EVENT_NAME"
+          echo "Workflow: $GITHUB_WORKFLOW"
+
       - name: Configure AWS Credentials
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: aws-actions/configure-aws-credentials@v4
