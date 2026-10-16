@@ -58,7 +58,7 @@ def run():
         user_id = row["id"]
         print(f"Created test user: {TEST_USER['email']} / {TEST_USER['password']} (id={user_id})")
 
-    # Bug 16 fixed: only insert incidents that don't already exist for this user
+    
     existing_count = execute_query(
         "SELECT COUNT(*) AS n FROM incidents WHERE user_id = %s", (user_id,), fetch="one"
     )
